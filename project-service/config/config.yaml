@@ -9,5 +9,5 @@ http:
   write_timeout: 1m
   shutdown_timeout: 5s
 user_service:
-  api: "user-service"
+  api: "crm-user-service-1"
   port: "8010"

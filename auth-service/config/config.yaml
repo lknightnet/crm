@@ -11,7 +11,7 @@ http:
   write_timeout: 1m
   shutdown_timeout: 5s
 jwt_service:
-  api: "jwt-service"
+  api: "crm-jwt-service-1"
   port: "8009"
 auth:
   signature: "gustav"
