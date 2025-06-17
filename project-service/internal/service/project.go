@@ -19,6 +19,26 @@ type projectService struct {
 	ProjectUsersRepository repository.ProjectUsersRepository
 }
 
+func (p *projectService) EditProject(projectID int, name, description *string) error {
+	project := &model.Project{
+		ID: projectID,
+	}
+
+	if name != nil {
+		project.Name = *name
+	}
+	if description != nil {
+		project.Description = description
+	}
+
+	err := p.ProjectRepository.EditProject(project)
+	if err != nil {
+		tg.SendError(err.Error(), "api/project/update")
+		return customServiceError.ErrUnknownError
+	}
+	return nil
+}
+
 func (p *projectService) GetProjectsByToken(token string) ([]model.ProjectWithCreatedUsername, error) {
 
 	user, err := GetUserByToken(token, p.UserServiceApi, p.UserServicePort)

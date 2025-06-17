@@ -351,3 +351,22 @@ func (t *TaskController) GetTaskNotDeadline(c *gin.Context) {
 
 	c.JSON(http.StatusOK, tasksResponse)
 }
+
+func (t *TaskController) EditTask(c *gin.Context) {
+	var json TaskUpdateRequest
+	if err := c.ShouldBindJSON(&json); err != nil {
+		c.JSON(http.StatusBadRequest, TaskErrorResponse{Status: false, Error: err.Error()})
+		return
+	}
+
+	err := t.TaskService.EditTask(json.TaskID, json.Name, json.Description, json.LevelPriority, json.Deadline, json.ProjectID, json.Executors)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, TaskErrorResponse{
+			Status: true,
+			Error:  err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"status": true})
+}

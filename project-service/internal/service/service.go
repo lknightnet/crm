@@ -10,6 +10,7 @@ type ProjectService interface {
 	CreateProject(token string, name string, description *string, projectUsers []int) error
 	GetProjectsByToken(token string) ([]model.ProjectWithCreatedUsername, error)
 	GetProjectByID(token string, projectID int) (*model.Project, []model.ProjectUsers, error)
+	EditProject(projectID int, name, description *string) error
 }
 
 type ProjectUsersService interface {
@@ -23,6 +24,7 @@ type TaskService interface {
 	GetTasksByProjectID(projectID int) ([]model.Task, error)
 	GetTasksByToken(token string) ([]model.TaskWithExecutorWithName, error)
 	GetTaskByID(token string, taskID int) (*model.Task, []model.TaskExecutor, error)
+	EditTask(taskID int, name *string, description *string, priority *int, deadline *time.Time, projectID *int, executors *[]int) error
 
 	GetTaskExpired(token string) ([]model.TaskWithExecutorWithName, error)
 	GetTaskToday(token string) ([]model.TaskWithExecutorWithName, error)

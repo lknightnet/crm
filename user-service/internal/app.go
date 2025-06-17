@@ -34,7 +34,7 @@ func Run(cfg *config.Config) {
 
 	route := gin.Default()
 	route.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"http://gustav.website", "http://crm-project-service-1:8012"},
+		AllowOrigins:     []string{"http://gustav.website", "http://crm-project-service-1:8012", "http://localhost:3000"},
 		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowHeaders:     []string{"Authorization", "Content-Type"},
 		AllowCredentials: true,

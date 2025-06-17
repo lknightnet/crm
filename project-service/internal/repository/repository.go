@@ -8,6 +8,7 @@ import (
 type ProjectRepository interface {
 	CreateProject(project *model.Project) (int, error)
 	GetProjectsByUserID(userID int) ([]model.Project, error)
+	EditProject(project *model.Project) error
 	GetProjectByID(projectID int) (*model.Project, []model.ProjectUsers, error)
 }
 
@@ -19,9 +20,11 @@ type ProjectUsersRepository interface {
 type TaskRepository interface {
 	CreateTask(task *model.Task) (int, error)
 	AddTaskExecutors(taskExecutor *model.TaskExecutor) error
+	RemoveAllTaskExecutors(taskID int) error
 	GetTasksByProjectID(projectID int) ([]model.Task, error)
 	GetTasksByUserID(userID int) ([]model.TaskWithExecutor, error)
 	GetTaskByID(taskID int) (*model.Task, []model.TaskExecutor, error)
+	EditTask(task *model.Task) error
 }
 type TimerRepository interface {
 	StartTimerEntry(timerEntry *model.TimerEntry) error

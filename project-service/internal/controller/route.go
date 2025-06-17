@@ -26,6 +26,7 @@ func RouteAPI(route *gin.Engine, services *service.Service) {
 	projectApi.POST("/create", projectController.CreateProject)
 	projectApi.GET("/get/list", projectController.GetProjectsByToken)
 	projectApi.GET("/get/:id", projectController.GetProjectByID)
+	projectApi.POST("/update", projectController.EditProject)
 
 	taskController := task.NewTaskController(services.TaskService)
 	taskApi := api.Group("/task")
@@ -40,6 +41,7 @@ func RouteAPI(route *gin.Engine, services *service.Service) {
 	taskApi.GET("/get/nextweek", taskController.GetTaskNextWeek)       //uses
 	taskApi.GET("/get/notdeadline", taskController.GetTaskNotDeadline) //uses
 	taskApi.GET("/get/single/:id", taskController.GetTaskByID)
+	taskApi.POST("/update", taskController.EditTask)
 
 	timerController := timer.NewTimerController(services.TimerService)
 	timerApi := api.Group("/timer")

@@ -12,6 +12,10 @@ type projectRepository struct {
 	db *database.PostgreSQL
 }
 
+func (p *projectRepository) EditProject(project *model.Project) error {
+	return p.db.DB.Model(&model.Project{}).Where("id = ?", project.ID).Updates(project).Error
+}
+
 func (p *projectRepository) GetProjectByID(projectID int) (*model.Project, []model.ProjectUsers, error) {
 	var project model.Project
 	err := p.db.DB.

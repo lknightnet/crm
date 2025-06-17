@@ -12,6 +12,19 @@ type taskRepository struct {
 	db *database.PostgreSQL
 }
 
+func (t *taskRepository) EditTask(task *model.Task) error {
+	return t.db.DB.Model(&model.Task{}).Where("id = ?", task.ID).Updates(task).Error
+}
+
+func (t *taskRepository) RemoveAllTaskExecutors(taskID int) error {
+	if err := t.db.DB.
+		Where("task_id = ?", taskID).
+		Delete(&model.TaskExecutor{}).Error; err != nil {
+		return err
+	}
+	return nil
+}
+
 func (t *taskRepository) CreateTask(task *model.Task) (int, error) {
 	if err := t.db.DB.Create(task).Error; err != nil {
 		return 0, err

@@ -21,6 +21,53 @@ type taskService struct {
 	ProjectRepository repository.ProjectRepository
 }
 
+func (t *taskService) EditTask(taskID int, name *string, description *string, priority *int, deadline *time.Time, projectID *int, executors *[]int) error {
+	task := &model.Task{
+		ID: taskID,
+	}
+
+	if name != nil {
+		task.Name = *name
+	}
+	if description != nil {
+		task.Description = description
+	}
+	if priority != nil {
+		task.Priority = *priority
+	}
+	if deadline != nil {
+		task.Deadline = deadline
+	}
+	if projectID != nil {
+		task.ProjectID = *projectID
+	}
+
+	err := t.TaskRepository.EditTask(task)
+	if err != nil {
+		tg.SendError(err.Error(), "api/project/update")
+		return customServiceError.ErrUnknownError
+	}
+
+	if executors != nil {
+		err := t.TaskRepository.RemoveAllTaskExecutors(taskID)
+		if err != nil {
+			tg.SendError(err, "api/task/edit/deleteExecutors")
+			return customServiceError.ErrUnknownError
+		}
+
+		// Добавляем новых исполнителей
+		for _, executorID := range *executors {
+			err := t.AddTaskExecutors(executorID, taskID)
+			if err != nil {
+				tg.SendError(err, "api/task/edit/addExecutor")
+				return customServiceError.ErrUnknownError
+			}
+		}
+	}
+
+	return nil
+}
+
 func (t *taskService) GetTaskExpired(token string) ([]model.TaskWithExecutorWithName, error) {
 	user, err := GetUserByToken(token, t.UserServiceApi, t.UserServicePort)
 	if err != nil {

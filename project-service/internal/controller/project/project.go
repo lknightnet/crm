@@ -146,3 +146,22 @@ func (p *ProjectController) GetProjectByID(c *gin.Context) {
 
 	c.JSON(http.StatusOK, projectsResponse)
 }
+
+func (p *ProjectController) EditProject(c *gin.Context) {
+	var json ProjectUpdateRequest
+	if err := c.ShouldBindJSON(&json); err != nil {
+		c.JSON(http.StatusBadRequest, ProjectErrorResponse{Status: false, Error: err.Error()})
+		return
+	}
+
+	err := p.ProjectService.EditProject(json.ProjectID, json.Name, json.Description)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, ProjectErrorResponse{
+			Status: true,
+			Error:  err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"status": true})
+}
