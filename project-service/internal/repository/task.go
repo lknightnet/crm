@@ -3,6 +3,7 @@ package repository
 import (
 	"errors"
 	"gorm.io/gorm"
+	"log"
 	"project-service/internal/model"
 	"project-service/internal/repository/customRepositoryError"
 	"project-service/pkg/database"
@@ -17,6 +18,7 @@ func (t *taskRepository) EditTask(task *model.Task) error {
 }
 
 func (t *taskRepository) RemoveAllTaskExecutors(taskID int) error {
+	log.Println(taskID)
 	if err := t.db.DB.
 		Where("task_id = ?", taskID).
 		Delete(&model.TaskExecutor{}).Error; err != nil {
@@ -33,6 +35,7 @@ func (t *taskRepository) CreateTask(task *model.Task) (int, error) {
 }
 
 func (t *taskRepository) AddTaskExecutors(taskExecutor *model.TaskExecutor) error {
+	log.Println(taskExecutor.ID)
 	return t.db.DB.Create(taskExecutor).Error
 }
 

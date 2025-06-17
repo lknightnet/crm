@@ -1,7 +1,7 @@
 package model
 
 type Project struct {
-	ID          int
+	ID          int `gorm:"primary_key"`
 	Name        string
 	Description *string
 	CreatedID   int //кто создал

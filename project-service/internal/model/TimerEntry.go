@@ -3,7 +3,7 @@ package model
 import "time"
 
 type TimerEntry struct {
-	ID             int
+	ID             int `gorm:"primary_key"`
 	TaskID         int
 	UserID         int
 	StartAt        time.Time

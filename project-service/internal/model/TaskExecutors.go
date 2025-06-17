@@ -1,7 +1,7 @@
 package model
 
 type TaskExecutor struct {
-	ID         int
+	ID         int `gorm:"primary_key"`
 	ExecutorID int
 	TaskID     int
 }
