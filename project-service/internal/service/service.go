@@ -11,6 +11,7 @@ type ProjectService interface {
 	GetProjectsByToken(token string) ([]model.ProjectWithCreatedUsername, error)
 	GetProjectByID(token string, projectID int) (*model.Project, []model.ProjectUsers, error)
 	EditProject(projectID int, name, description *string, projectUsers *[]int) error
+	GetProjectsByName(token string, projectName string) ([]model.ProjectWithProjectUsers, error)
 }
 
 type ProjectUsersService interface {

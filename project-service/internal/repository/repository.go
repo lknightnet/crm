@@ -10,6 +10,7 @@ type ProjectRepository interface {
 	GetProjectsByUserID(userID int) ([]model.Project, error)
 	EditProject(project *model.Project) error
 	GetProjectByID(projectID int) (*model.Project, []model.ProjectUsers, error)
+	GetProjectsByName(userID int, name string) ([]model.Project, error)
 }
 
 type ProjectUsersRepository interface {

@@ -19,6 +19,50 @@ type projectService struct {
 	ProjectUsersRepository repository.ProjectUsersRepository
 }
 
+func (p *projectService) GetProjectsByName(token string, projectName string) ([]model.ProjectWithProjectUsers, error) {
+	user, err := GetUserByToken(token, p.UserServiceApi, p.UserServicePort)
+	if err != nil {
+		if errors.Is(err, customServiceError.ErrTokenExpired) {
+			tg.SendError(fmt.Errorf("method: GetUserByToken, error: %s", err.Error()), "api/project/get/like")
+			return nil, customServiceError.ErrTokenExpired
+		}
+		if errors.Is(err, customServiceError.ErrTokenNotFound) {
+			tg.SendError(fmt.Errorf("method: GetUserByToken, error: %s", err.Error()), "api/project/get/like")
+			return nil, customServiceError.ErrTokenNotFound
+		}
+		tg.SendError(fmt.Errorf("method: GetUserByToken, error: %s", err.Error()), "api/project/get/like")
+		return nil, customServiceError.ErrUnknownError
+	}
+
+	projects, err := p.ProjectRepository.GetProjectsByName(user.ID, projectName)
+	if err != nil {
+		return nil, customServiceError.ErrUnknownError
+	}
+
+	var projectUser []model.ProjectWithProjectUsers
+	for i, project := range projects {
+
+		_, projectUsers, err := p.ProjectRepository.GetProjectByID(project.ID)
+		if err != nil {
+			if errors.Is(err, customRepositoryError.ErrProjectNotFound) {
+				tg.SendError(err, "api/project/get/like")
+				return nil, customServiceError.ErrProjectNotFound
+			}
+		}
+
+		projectUser[i] = model.ProjectWithProjectUsers{
+			ID:           project.ID,
+			Name:         project.Name,
+			Description:  project.Description,
+			CreatedID:    project.CreatedID,
+			Visibility:   true,
+			ProjectUsers: projectUsers,
+		}
+	}
+
+	return projectUser, nil
+}
+
 func (p *projectService) EditProject(projectID int, name, description *string, projectUsers *[]int) error {
 	project := &model.Project{
 		ID: projectID,
@@ -49,6 +93,10 @@ func (p *projectService) EditProject(projectID int, name, description *string, p
 				ProjectID: projectID,
 				CreatedAt: time.Now(),
 			})
+			if err != nil {
+				tg.SendError(err.Error(), "api/project/update")
+				return customServiceError.ErrUnknownError
+			}
 		}
 	}
 

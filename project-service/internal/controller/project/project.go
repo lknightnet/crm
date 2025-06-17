@@ -165,3 +165,48 @@ func (p *ProjectController) EditProject(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"status": true})
 }
+
+func (p *ProjectController) GetProjectsByName(c *gin.Context) {
+	token, _ := c.Get("token")
+	name := c.Param("name")
+	projects, err := p.ProjectService.GetProjectsByName(token.(string), name)
+	if err != nil {
+		if errors.Is(err, customServiceError.ErrProjectNotFound) {
+			c.JSON(http.StatusInternalServerError, ProjectErrorResponse{
+				Status: false,
+				Error:  customServiceError.ErrProjectNotFound.Error(),
+			})
+			return
+		}
+		if errors.Is(err, customServiceError.ErrPermissionDenied) {
+			c.JSON(http.StatusForbidden, ProjectErrorResponse{
+				Status: false,
+				Error:  customServiceError.ErrProjectNotFound.Error(),
+			})
+			return
+		}
+		if errors.Is(err, customServiceError.ErrTokenExpired) {
+			c.JSON(http.StatusUnauthorized, ProjectErrorResponse{
+				Status: false,
+				Error:  err.Error(),
+			})
+			return
+		}
+		if errors.Is(err, customServiceError.ErrTokenNotFound) {
+			c.JSON(http.StatusNotFound, ProjectErrorResponse{
+				Status: false,
+				Error:  err.Error(),
+			})
+			return
+		}
+		c.JSON(http.StatusInternalServerError, ProjectErrorResponse{
+			Status: false,
+			Error:  err.Error(),
+		})
+		return
+	}
+
+	projectResponse := NewProjectsWithProjectUsersResponse(projects)
+
+	c.JSON(http.StatusOK, projectResponse)
+}

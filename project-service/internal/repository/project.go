@@ -12,6 +12,34 @@ type projectRepository struct {
 	db *database.PostgreSQL
 }
 
+func (p *projectRepository) GetProjectsByName(userID int, name string) ([]model.Project, error) {
+	var projectIDs []string
+
+	// Получаем все project_id, к которым привязан пользователь
+	err := p.db.DB.
+		Table("project_users").
+		Where("user_id = ?", userID).
+		Pluck("project_id", &projectIDs).Error
+	if err != nil {
+		return nil, err
+	}
+
+	if len(projectIDs) == 0 {
+		return nil, nil // Возвращаем пустой массив без ошибки
+	}
+
+	var projects []model.Project
+	err = p.db.DB.
+		Where("id IN ?", projectIDs).
+		Where("name ILIKE ?", "%"+name+"%").
+		Find(&projects).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return projects, nil
+}
+
 func (p *projectRepository) EditProject(project *model.Project) error {
 	return p.db.DB.Model(&model.Project{}).Where("id = ?", project.ID).Updates(project).Error
 }

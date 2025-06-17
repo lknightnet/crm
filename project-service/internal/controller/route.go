@@ -27,6 +27,7 @@ func RouteAPI(route *gin.Engine, services *service.Service) {
 	projectApi.GET("/get/list", projectController.GetProjectsByToken)
 	projectApi.GET("/get/:id", projectController.GetProjectByID)
 	projectApi.POST("/update", projectController.EditProject)
+	projectApi.GET("/like/:name", projectController.GetProjectsByName)
 
 	taskController := task.NewTaskController(services.TaskService)
 	taskApi := api.Group("/task")

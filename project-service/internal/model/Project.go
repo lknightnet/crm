@@ -16,3 +16,12 @@ type ProjectWithCreatedUsername struct {
 	CreatedID   int //кто создал
 	Visibility  bool
 }
+
+type ProjectWithProjectUsers struct {
+	ID           int
+	Name         string
+	Description  *string
+	CreatedID    int //кто создал
+	Visibility   bool
+	ProjectUsers []ProjectUsers
+}
