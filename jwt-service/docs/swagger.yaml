@@ -1,0 +1,142 @@
+definitions:
+  request.GenerateRequest:
+    properties:
+      user_id:
+        type: string
+    type: object
+  request.RefreshRequest:
+    properties:
+      refresh_token:
+        type: string
+    type: object
+  request.ValidateRequest:
+    properties:
+      access_token:
+        type: string
+    type: object
+  response.AccessTokenResponse:
+    properties:
+      audience:
+        type: string
+      expiration_at:
+        type: string
+      issued_at:
+        type: string
+      issuer:
+        type: string
+      subject:
+        type: string
+      token:
+        type: string
+    type: object
+  response.ErrorResponse:
+    properties:
+      error:
+        type: string
+      status:
+        type: boolean
+    type: object
+  response.TokensResponse:
+    properties:
+      access_token:
+        type: string
+      refresh_token:
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /api/generate:
+    post:
+      consumes:
+      - application/json
+      description: This endpoint generates JWT tokens for a user based on the provided
+        user ID.
+      parameters:
+      - description: User ID for token generation
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/request.GenerateRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully generated tokens
+          schema:
+            $ref: '#/definitions/response.TokensResponse'
+        "400":
+          description: Invalid input data
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+        "500":
+          description: Error generating tokens
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+      summary: Generate JWT tokens
+      tags:
+      - auth
+  /api/refresh:
+    post:
+      consumes:
+      - application/json
+      description: This endpoint refreshes the JWT tokens (access and refresh tokens)
+        based on the provided refresh token.
+      parameters:
+      - description: Refresh token
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/request.RefreshRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully refreshed tokens
+          schema:
+            $ref: '#/definitions/response.TokensResponse'
+        "400":
+          description: Invalid input data
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+        "500":
+          description: Error generating new tokens
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+      summary: Refresh JWT tokens
+      tags:
+      - auth
+  /api/validate:
+    post:
+      consumes:
+      - application/json
+      description: This endpoint validates the provided access token and returns its
+        claims (issuer, audience, subject, etc.).
+      parameters:
+      - description: Access token
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/request.ValidateRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully validated token
+          schema:
+            $ref: '#/definitions/response.AccessTokenResponse'
+        "400":
+          description: Invalid input data
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+        "500":
+          description: Error validating token
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+      summary: Validate JWT token
+      tags:
+      - auth
+swagger: "2.0"

@@ -1,0 +1,14 @@
+app:
+  name: "jwt-service"
+  version: "0.0.3"
+database:
+  uri: postgres://green:0010@gustavcrm-postgres-1:5432/gustav
+jwt:
+  sign_key: "gustav"
+  access_expiry: 168h
+  refresh_expiry: 1440h
+http:
+  port: 8009
+  read_timeout: 1m
+  write_timeout: 1m
+  shutdown_timeout: 5s

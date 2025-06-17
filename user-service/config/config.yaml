@@ -1,0 +1,13 @@
+app:
+  name: "user-service"
+  version: "0.0.1"
+database:
+  uri: postgres://green:0010@gustavcrm-postgres-1:5432/gustav
+http:
+  port: 8010
+  read_timeout: 1m
+  write_timeout: 1m
+  shutdown_timeout: 5s
+jwt_service:
+  api: "jwt-service"
+  port: "8009"
