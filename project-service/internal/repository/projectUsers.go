@@ -28,7 +28,7 @@ func (p *projectUsersRepository) RemoveProjectUsers(projectID int) error {
 
 func (p *projectUsersRepository) AddProjectUser(projectUser *model.ProjectUsers) error {
 	var project *model.Project
-	err := p.db.DB.Where("id = ?", projectUser.ProjectID).First(project).Error
+	err := p.db.DB.Where("id = ?", projectUser.ProjectID).First(&project).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return customRepositoryError.ErrProjectNotFound
