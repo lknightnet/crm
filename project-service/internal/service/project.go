@@ -148,13 +148,39 @@ func (p *projectService) GetProjectsByToken(token string) ([]model.ProjectWithCr
 			return nil, customServiceError.ErrUnknownError
 		}
 
+		_, users, err := p.ProjectRepository.GetProjectByID(project.ID)
+		if err != nil {
+			tg.SendError(fmt.Errorf(err.Error()), "api/project/get/list")
+			log.Println("GetProjectByID Loop, api/project/get/list, error:", err)
+			return nil, customServiceError.ErrUnknownError
+		}
+
+		// Преобразуем []ProjectUsers → []ProjectUsersDTO
+		var projectUsersDTO []model.ProjectUsersDTO
+		for _, pu := range users {
+			userIDStr := strconv.Itoa(pu.UserID)
+
+			user, err := GetUserByID(userIDStr, p.UserServiceApi, p.UserServicePort)
+			if err != nil {
+				tg.SendError(fmt.Errorf("method: GetUserByID, userID: %s, error: %s", userIDStr, err.Error()), "api/project/get/list")
+				log.Println("GetUserByID Loop, api/project/get/list, error:", err)
+				return nil, customServiceError.ErrUnknownError
+			}
+
+			projectUsersDTO = append(projectUsersDTO, model.ProjectUsersDTO{
+				UserID:   pu.UserID,
+				UserName: user.Name,
+			})
+		}
+
 		projectsWithResponsibleUsers = append(projectsWithResponsibleUsers, model.ProjectWithCreatedUsername{
-			ID:          project.ID,
-			Name:        project.Name,
-			Description: project.Description,
-			CreatedName: user.Name,
-			CreatedID:   project.CreatedID,
-			Visibility:  project.Visibility,
+			ID:           project.ID,
+			Name:         project.Name,
+			Description:  project.Description,
+			CreatedName:  user.Name,
+			CreatedID:    project.CreatedID,
+			Visibility:   project.Visibility,
+			ProjectUsers: projectUsersDTO,
 		})
 	}
 	return projectsWithResponsibleUsers, nil

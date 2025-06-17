@@ -13,11 +13,12 @@ type ProjectResponse struct {
 }
 
 type ProjectWithCreatedUsernameResponse struct {
-	ID              int     `json:"id"`
-	Name            string  `json:"name"`
-	Description     *string `json:"description"`
-	CreatedUsername string  `json:"created_username"` //кто создал
-	CreatedID       int     `json:"created_id"`       //кто создал
+	ID              int                     `json:"id"`
+	Name            string                  `json:"name"`
+	Description     *string                 `json:"description"`
+	CreatedUsername string                  `json:"created_username"` //кто создал
+	CreatedID       int                     `json:"created_id"`       //кто создал
+	ProjectUsers    []model.ProjectUsersDTO `json:"project_users"`
 }
 
 type ProjectUsersResponse struct {
@@ -46,6 +47,7 @@ func NewProjectWithCreatedUsernameResponse(project *model.ProjectWithCreatedUser
 		Description:     project.Description,
 		CreatedUsername: project.CreatedName,
 		CreatedID:       project.CreatedID,
+		ProjectUsers:    project.ProjectUsers,
 	}
 }
 

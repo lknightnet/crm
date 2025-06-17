@@ -8,3 +8,8 @@ type ProjectUsers struct {
 	ProjectID int
 	CreatedAt time.Time
 }
+
+type ProjectUsersDTO struct {
+	UserID   int
+	UserName string
+}
