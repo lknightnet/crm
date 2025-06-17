@@ -7,7 +7,7 @@ import (
 )
 
 type ProjectService interface {
-	CreateProject(token string, name string, description *string, projectUsers []int) error
+	CreateProject(token string, name string, description *string, projectUsers *[]int) error
 	GetProjectsByToken(token string) ([]model.ProjectWithCreatedUsername, error)
 	GetProjectByID(token string, projectID int) (*model.Project, []model.ProjectUsers, error)
 	EditProject(projectID int, name, description *string, projectUsers *[]int) error

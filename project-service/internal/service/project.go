@@ -3,6 +3,7 @@ package service
 import (
 	"errors"
 	"fmt"
+	"log"
 	"project-service/internal/model"
 	"project-service/internal/repository"
 	"project-service/internal/repository/customRepositoryError"
@@ -31,11 +32,14 @@ func (p *projectService) GetProjectsByName(token string, projectName string) ([]
 			return nil, customServiceError.ErrTokenNotFound
 		}
 		tg.SendError(fmt.Errorf("method: GetUserByToken, error: %s", err.Error()), "api/project/get/like")
+		log.Println("GetUserByToken, api/project/get/like, error:", err)
 		return nil, customServiceError.ErrUnknownError
 	}
 
 	projects, err := p.ProjectRepository.GetProjectsByName(user.ID, projectName)
 	if err != nil {
+		tg.SendError(err, "api/project/get/like")
+		log.Println("GetProjectsByName, api/project/get/like, error:", err)
 		return nil, customServiceError.ErrUnknownError
 	}
 
@@ -46,6 +50,7 @@ func (p *projectService) GetProjectsByName(token string, projectName string) ([]
 		if err != nil {
 			if errors.Is(err, customRepositoryError.ErrProjectNotFound) {
 				tg.SendError(err, "api/project/get/like")
+				log.Println("GetProjectByID Loop, api/project/get/like, error:", err)
 				return nil, customServiceError.ErrProjectNotFound
 			}
 		}
@@ -78,12 +83,14 @@ func (p *projectService) EditProject(projectID int, name, description *string, p
 	err := p.ProjectRepository.EditProject(project)
 	if err != nil {
 		tg.SendError(err.Error(), "api/project/update")
+		log.Println("EditProject, api/project/update, error:", err)
 		return customServiceError.ErrUnknownError
 	}
 
 	err = p.ProjectUsersRepository.RemoveProjectUsers(projectID)
 	if err != nil {
 		tg.SendError(err.Error(), "api/project/update")
+		log.Println("RemoveProjectUsers, api/project/update, error:", err)
 		return customServiceError.ErrUnknownError
 	}
 	if projectUsers != nil {
@@ -95,6 +102,7 @@ func (p *projectService) EditProject(projectID int, name, description *string, p
 			})
 			if err != nil {
 				tg.SendError(err.Error(), "api/project/update")
+				log.Println("AddProjectUser Loop, api/project/update, error:", err)
 				return customServiceError.ErrUnknownError
 			}
 		}
@@ -116,6 +124,7 @@ func (p *projectService) GetProjectsByToken(token string) ([]model.ProjectWithCr
 			return nil, customServiceError.ErrTokenNotFound
 		}
 		tg.SendError(fmt.Errorf("method: GetUserByToken, error: %s", err.Error()), "api/project/get/list")
+		log.Println("GetUserByToken, api/project/get/list, error:", err)
 		return nil, customServiceError.ErrUnknownError
 	}
 
@@ -126,6 +135,7 @@ func (p *projectService) GetProjectsByToken(token string) ([]model.ProjectWithCr
 			return nil, customServiceError.ErrProjectsNotFound
 		}
 		tg.SendError(fmt.Errorf("method: GetProjectsByUserID, error: %s", err.Error()), "api/project/get/list")
+		log.Println("GetProjectsByUserID, api/project/get/list, error:", err)
 		return nil, customServiceError.ErrUnknownError
 	}
 
@@ -134,6 +144,7 @@ func (p *projectService) GetProjectsByToken(token string) ([]model.ProjectWithCr
 		user, err := GetUserByID(strconv.Itoa(project.CreatedID), p.UserServiceApi, p.UserServicePort)
 		if err != nil {
 			tg.SendError(fmt.Errorf("method: GetUserByID, error: %s", err.Error()), "api/project/get/list")
+			log.Println("GetUserByID Loop, api/project/get/list, error:", err)
 			return nil, customServiceError.ErrUnknownError
 		}
 
@@ -187,7 +198,7 @@ func (p *projectService) GetProjectByID(token string, projectID int) (*model.Pro
 	}
 }
 
-func (p *projectService) CreateProject(token string, name string, description *string, projectUsers []int) error {
+func (p *projectService) CreateProject(token string, name string, description *string, projectUsers *[]int) error {
 	user, err := GetUserByToken(token, p.UserServiceApi, p.UserServicePort)
 	if err != nil {
 		if errors.Is(err, customServiceError.ErrTokenExpired) {
@@ -199,6 +210,7 @@ func (p *projectService) CreateProject(token string, name string, description *s
 			return customServiceError.ErrTokenNotFound
 		}
 		tg.SendError(err, "api/project/create")
+		log.Println("GetUserByToken, api/project/create, error:", err)
 		return customServiceError.ErrUnknownError
 	}
 
@@ -212,6 +224,7 @@ func (p *projectService) CreateProject(token string, name string, description *s
 	projectID, err := p.ProjectRepository.CreateProject(project)
 	if err != nil {
 		tg.SendError(err, "api/project/create")
+		log.Println("CreateProject, api/project/create, error:", err)
 		return customServiceError.ErrUnknownError
 	}
 
@@ -220,19 +233,27 @@ func (p *projectService) CreateProject(token string, name string, description *s
 		ProjectID: projectID,
 		CreatedAt: time.Now(),
 	})
-
-	for _, projectUser := range projectUsers {
-		err = p.ProjectUsersRepository.AddProjectUser(&model.ProjectUsers{
-			UserID:    projectUser,
-			ProjectID: projectID,
-			CreatedAt: time.Now(),
-		})
-	}
-
 	if err != nil {
 		tg.SendError(err, "api/project/create")
+		log.Println("AddProjectUser, api/project/create, error:", err)
 		return customServiceError.ErrUnknownError
 	}
+
+	if projectUsers != nil && len(*projectUsers) > 0 {
+		for _, projectUser := range *projectUsers {
+			err = p.ProjectUsersRepository.AddProjectUser(&model.ProjectUsers{
+				UserID:    projectUser,
+				ProjectID: projectID,
+				CreatedAt: time.Now(),
+			})
+			if err != nil {
+				tg.SendError(err, "api/project/create")
+				log.Println("AddProjectUser Loop, api/project/create, error:", err)
+				return customServiceError.ErrUnknownError
+			}
+		}
+	}
+
 	return nil
 }
 
