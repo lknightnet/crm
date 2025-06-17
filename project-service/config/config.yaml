@@ -2,7 +2,7 @@ app:
   name: "project-service"
   version: "0.0.1"
 database:
-  uri: postgres://green:0010@gustavcrm-postgres-1:5432/gustav
+  uri: postgres://green:0010@crm-postgres-1:5432/gustav
 http:
   port: 8012
   read_timeout: 1m

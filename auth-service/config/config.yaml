@@ -2,7 +2,7 @@ app:
   name: "auth-service"
   version: "0.0.2"
 database:
-  uri: postgres://green:0010@gustavcrm-postgres-1:5432/gustav
+  uri: postgres://green:0010@crm-postgres-1:5432/gustav
 jwt:
   sign_key: "gustav"
 http:
