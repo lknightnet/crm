@@ -15,6 +15,7 @@ type ProjectRepository interface {
 type ProjectUsersRepository interface {
 	AddProjectUser(projectUser *model.ProjectUsers) error
 	RemoveProjectUser(projectUser *model.ProjectUsers) error
+	RemoveProjectUsers(projectID int) error
 }
 
 type TaskRepository interface {

@@ -154,7 +154,7 @@ func (p *ProjectController) EditProject(c *gin.Context) {
 		return
 	}
 
-	err := p.ProjectService.EditProject(json.ProjectID, json.Name, json.Description)
+	err := p.ProjectService.EditProject(json.ProjectID, json.Name, json.Description, json.Users)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, ProjectErrorResponse{
 			Status: true,

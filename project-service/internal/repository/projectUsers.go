@@ -12,6 +12,20 @@ type projectUsersRepository struct {
 	db *database.PostgreSQL
 }
 
+func (p *projectUsersRepository) RemoveProjectUsers(projectID int) error {
+	var project model.Project
+	if err := p.db.DB.First(&project, projectID).Error; err != nil {
+		return err
+	}
+
+	if err := p.db.DB.
+		Where("project_id = ? AND user_id != ?", projectID, project.CreatedID).
+		Delete(&model.ProjectUsers{}).Error; err != nil {
+		return err
+	}
+	return nil
+}
+
 func (p *projectUsersRepository) AddProjectUser(projectUser *model.ProjectUsers) error {
 	var project *model.Project
 	err := p.db.DB.Where("id = ?", projectUser.ProjectID).First(project).Error

@@ -19,7 +19,7 @@ type projectService struct {
 	ProjectUsersRepository repository.ProjectUsersRepository
 }
 
-func (p *projectService) EditProject(projectID int, name, description *string) error {
+func (p *projectService) EditProject(projectID int, name, description *string, projectUsers *[]int) error {
 	project := &model.Project{
 		ID: projectID,
 	}
@@ -36,6 +36,22 @@ func (p *projectService) EditProject(projectID int, name, description *string) e
 		tg.SendError(err.Error(), "api/project/update")
 		return customServiceError.ErrUnknownError
 	}
+
+	err = p.ProjectUsersRepository.RemoveProjectUsers(projectID)
+	if err != nil {
+		tg.SendError(err.Error(), "api/project/update")
+		return customServiceError.ErrUnknownError
+	}
+	if projectUsers != nil {
+		for _, projectUser := range *projectUsers {
+			err = p.ProjectUsersRepository.AddProjectUser(&model.ProjectUsers{
+				UserID:    projectUser,
+				ProjectID: projectID,
+				CreatedAt: time.Now(),
+			})
+		}
+	}
+
 	return nil
 }
 
