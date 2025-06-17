@@ -10,6 +10,6 @@ type ProjectUsers struct {
 }
 
 type ProjectUsersDTO struct {
-	UserID   int
-	UserName string
+	UserID   int    `json:"user_id"`
+	UserName string `json:"user_name"`
 }
