@@ -17,8 +17,7 @@ import (
 )
 
 func Run(cfg *config.Config) {
-	connection, err := database.NewConnection(cfg.Database.URI, 0, 5, &model.Project{}, &model.ProjectUsers{},
-		&model.ProjectUsers{}, &model.TaskExecutor{}, &model.Task{}, &model.TimerEntry{}, &model.InformationList{})
+	connection, err := database.NewConnection(cfg.Database.URI, 0, 5, &model.Project{}, &model.ProjectUsers{}, &model.TaskExecutor{}, &model.Task{}, &model.TimerEntry{}, &model.InformationList{})
 	if err != nil {
 		panic(err)
 	}
