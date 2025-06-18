@@ -50,7 +50,7 @@ func RouteAPI(route *gin.Engine, services *service.Service) {
 
 	timerApi.POST("/start", timerController.StartTimer)
 	timerApi.POST("/stop", timerController.StopTimer)
-	timerApi.GET("/resume/:id", timerController.StopTimer)
+	timerApi.GET("/resume/:id", timerController.ResumeTimer)
 	//timerApi.GET("/get/task/:id", timerController.GetTimersByTaskID)
 	//timerApi.GET("/get/user", timerController.GetTimersByUserID)
 
