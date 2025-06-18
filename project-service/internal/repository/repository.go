@@ -30,7 +30,8 @@ type TaskRepository interface {
 }
 type TimerRepository interface {
 	StartTimerEntry(timerEntry *model.TimerEntry) error
-	StopTimerEntry(userID int) error
+	StopTimerEntry(userID int, taskID *int) error
+	ResumeTimerEntry(timerID int) error
 	GetTimersByTaskID(taskID int) ([]model.TimerEntry, error)
 	GetTimersByUserID(userID int) ([]model.TimerEntry, error)
 }

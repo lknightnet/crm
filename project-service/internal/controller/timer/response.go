@@ -5,21 +5,30 @@ import (
 	"time"
 )
 
-type TimerGetResponse struct {
-	ID             int
-	StartAt        time.Time
-	StopAt         *time.Time
-	DurationSecond time.Duration
-	CreatedAt      time.Time
-	UpdatedAt      time.Time
-	Active         bool
+type TimerErrorResponse struct {
+	Status bool   `json:"status"`
+	Error  string `json:"error"`
 }
 
-func NewTimerGetResponse(timer *model.TimerEntry) *TimerGetResponse {
-	return &TimerGetResponse{
+type TimerResponse struct {
+	ID             int           `json:"id"`
+	TaskID         *int          `json:"task_id"`
+	UserID         int           `json:"user_id"`
+	StartedAt      *time.Time    `json:"started_at"`
+	StoppedAt      *time.Time    `json:"stopped_at"`
+	DurationSecond time.Duration `json:"duration_second"`
+	CreatedAt      time.Time     `json:"created_at"`
+	UpdatedAt      time.Time     `json:"updated_at"`
+	Active         bool          `json:"active"`
+}
+
+func NewTimerResponse(timer *model.TimerEntry) *TimerResponse {
+	return &TimerResponse{
 		ID:             timer.ID,
-		StartAt:        timer.StartAt,
-		StopAt:         timer.StopAt,
+		TaskID:         timer.TaskID,
+		UserID:         timer.UserID,
+		StartedAt:      timer.StartedAt,
+		StoppedAt:      timer.StoppedAt,
 		DurationSecond: timer.DurationSecond,
 		CreatedAt:      timer.CreatedAt,
 		UpdatedAt:      timer.UpdatedAt,

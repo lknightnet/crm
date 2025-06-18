@@ -35,10 +35,11 @@ type TaskService interface {
 }
 
 type TimerService interface {
-	StartTimerEntry(token string, taskID int) error
-	StopTimerEntry(token string) error
-	GetTimersByTaskID(token string, taskID int) ([]model.TimerEntry, error)
-	GetTimersByUserID(token string) ([]model.TimerEntry, error)
+	StartTimer(token string, taskID *int) (*model.TimerEntry, error)
+	StopTimer(token string, taskID *int) error
+	ResumeTimer(timerID int) (*model.TimerEntry, error)
+	GetTimersByTask(taskID int) ([]model.TimerEntry, error)
+	GetTimersByUser(userID int) ([]model.TimerEntry, error)
 }
 
 type InformationListService interface {

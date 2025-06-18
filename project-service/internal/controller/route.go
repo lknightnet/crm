@@ -27,7 +27,7 @@ func RouteAPI(route *gin.Engine, services *service.Service) {
 	projectApi.GET("/get/list", projectController.GetProjectsByToken)
 	projectApi.GET("/get/:id", projectController.GetProjectByID)
 	projectApi.POST("/update", projectController.EditProject)
-	projectApi.GET("/like/:name", projectController.GetProjectsByName)
+	//projectApi.GET("/like/:name", projectController.GetProjectsByName)
 
 	taskController := task.NewTaskController(services.TaskService)
 	taskApi := api.Group("/task")
@@ -48,10 +48,11 @@ func RouteAPI(route *gin.Engine, services *service.Service) {
 	timerApi := api.Group("/timer")
 	timerApi.Use(AuthMiddleware())
 
-	timerApi.GET("/start/:id", timerController.StartTimer)
-	timerApi.GET("/stop", timerController.StopTimer)
-	timerApi.GET("/get/task/:id", timerController.GetTimersByTaskID)
-	timerApi.GET("/get/user", timerController.GetTimersByUserID)
+	timerApi.POST("/start", timerController.StartTimer)
+	timerApi.POST("/stop", timerController.StopTimer)
+	timerApi.GET("/resume/:id", timerController.StopTimer)
+	//timerApi.GET("/get/task/:id", timerController.GetTimersByTaskID)
+	//timerApi.GET("/get/user", timerController.GetTimersByUserID)
 
 	listController := lists.NewInformationListController(services.InformationListService)
 	listApi := api.Group("/lists")

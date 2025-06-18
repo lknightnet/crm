@@ -4,10 +4,10 @@ import "time"
 
 type TimerEntry struct {
 	ID             int `gorm:"primary_key"`
-	TaskID         int
+	TaskID         *int
 	UserID         int
-	StartAt        time.Time
-	StopAt         *time.Time
+	StartedAt      *time.Time
+	StoppedAt      *time.Time
 	DurationSecond time.Duration
 	CreatedAt      time.Time
 	UpdatedAt      time.Time

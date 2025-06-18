@@ -18,12 +18,17 @@ func (t *taskRepository) EditTask(task *model.Task) error {
 }
 
 func (t *taskRepository) RemoveAllTaskExecutors(taskID int) error {
-	log.Println(taskID)
+	var task model.Task
+	if err := t.db.DB.First(&task, taskID).Error; err != nil {
+		return err
+	}
+
 	if err := t.db.DB.
-		Where("task_id = ?", taskID).
+		Where("task_id = ? AND executor_id != ?", taskID, task.CreatedID).
 		Delete(&model.TaskExecutor{}).Error; err != nil {
 		return err
 	}
+
 	return nil
 }
 

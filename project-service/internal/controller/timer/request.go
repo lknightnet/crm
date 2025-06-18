@@ -1,6 +1,5 @@
 package timer
 
-type TimerErrorResponse struct {
-	Status bool   `json:"status"`
-	Error  string `json:"error"`
+type TimerCreateRequest struct {
+	TaskID *int `json:"task_id"`
 }
